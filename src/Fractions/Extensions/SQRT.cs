@@ -45,5 +45,47 @@ namespace Fractions.Extensions {
 
             return newGuess;
         }
+
+        //calculates the value of e to the power of x, where e is the base of the natural logarithm
+        public static Fraction Exp(this Fraction x, int accuracy = 100) {
+
+            var sum = Fraction.One;
+
+            // var tolerance = new Fraction(BigInteger.One, BigInteger.Pow(new BigInteger(10), numberOFDecimalPlaceAccuracy));
+
+            for (int i = accuracy - 1; i > 0; i--) {
+
+                sum = 1 + x * sum / i;
+            }
+
+            return sum;
+
+        }
+
+        public static Fraction Ln(this Fraction x, int numberOFDecimalPlaceAccuracy = 30) {
+
+            Fraction oldGuess;
+            var newGuess = Fraction.Zero;
+            var tolerance = new Fraction(BigInteger.One, BigInteger.Pow(new BigInteger(10), numberOFDecimalPlaceAccuracy));
+
+
+            //Using Math.Sqrt to get a good starting guess
+            var guessDouble = Math.Log((double)x);
+            if (double.IsInfinity(guessDouble)) {
+                oldGuess = x / 2;
+            } else {
+                oldGuess = (Fraction)guessDouble;
+            }
+
+
+            while ((oldGuess - newGuess).Abs() > tolerance) {
+                newGuess = oldGuess + 2 * (((x - oldGuess.Exp()) / (x + oldGuess.Exp())));
+                oldGuess = newGuess;
+            }
+
+            return oldGuess;
+
+        }
+
     }
 }
